@@ -4,96 +4,64 @@ import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios'; 
 import { Button, Card, CardContent, CardHeader } from '@mui/material';
 
-
-function Customertable({nextpage,handleEdit,selectedCustomer}){
+function Itemtable({nextpage,handleEdit,selectedItem}){
     const [apiData, setApiData] =useState([]);
-    
     const handleDelete = async (id) => {
         try {
           console.log(id)  
-          await axios.delete(`http://localhost:5000/api/Customer/${id}`);
+          await axios.delete(`http://localhost:5000/api/Item/${id}`);
           console.log("deleted")
         } catch (error) {
           console.error('Error deleting data:', error);
         }
         fetchData();
       };
-
-      
     const columns = [
     
         {
-          field: 'customerName',
-          headerName: 'Name',
-          width: 150,
+          field: 'itemCode',
+          headerName: 'Item Code',
+          width: 170,
           editable: true,
         },
         {
-          field: 'address',
-          headerName: 'Address',
-          width: 150,
+          field: 'itemName',
+          headerName: 'Item Name',
+          width: 170,
           editable: true,
         },
         {
-          field: 'street',
-          headerName: 'Street',
+          field: 'stock',
+          headerName: 'Stock',
           type: 'text',
-          width: 110,
+          width: 170,
           editable: true,
         },
         {
-          field: 'city',
-          headerName: 'city',
+          field: 'rate',
+          headerName: 'Rate',
           type: 'text',
-          width: 110,
+          width: 170,
           editable: true,
         },
         {
-          field: 'pincode',
-          headerName: 'Pincode',
+          field: 'gstRate',
+          headerName: 'Gst rate',
           type: 'text',
-          width: 110,
-          editable: true,
-        },
-        {
-          field: 'mobileNumber',
-          headerName: 'Mobile No',
-          type: 'text',
-          width: 110,
-          editable: true,
-        },
-        {
-          field: 'email',
-          headerName: 'Email',
-          type: 'text',
-          width: 110,
-          editable: true,
-        },
-        {
-          field: 'outstandingAmount',
-          headerName: 'Outstanding amount',
-          type: 'number',
-          width: 110,
-          editable: true,
-        },
-        {
-          field: 'outstandingLimit',
-          headerName: 'Outstanding limit',
-          type: 'text',
-          width: 110,
+          width: 170,
           editable: true,
         },
         {
           field: 'actions',
           headerName: 'Actions',
           sortable: false,
-          width: 150,
+          width: 170,
           renderCell: (params) => (
             <div>
               <Button variant="contained" color="primary" size="small" style={{ marginRight: 8 }} onClick={() =>handleEdit(params.row)}>
                 Edit
               </Button>
-              <Button variant="contained" color="secondary" size="small" onClick={() => handleDelete(params.row.customerId)} >
+              <Button variant="contained" color="secondary" size="small" onClick={() => handleDelete(params.row.itemId)} >
                 Delete
               </Button>
             </div>
@@ -105,7 +73,7 @@ function Customertable({nextpage,handleEdit,selectedCustomer}){
         const fetchData = async () => {
             try {
               // Replace 'API_ENDPOINT_URL' with your actual API endpoint URL
-              const response = await axios.get('http://localhost:5000/api/Customer/');
+              const response = await axios.get('http://localhost:5000/api/Item');
               console.log(response.data)
                // Map the received data and assign a unique 'id' property to each row
             const formattedData = response.data.rows.map((row, index) => ({
@@ -127,13 +95,13 @@ function Customertable({nextpage,handleEdit,selectedCustomer}){
     
     return(
         <Card>
-            <CardHeader  title="Customer List" action={<Button onClick={nextpage} color="secondary">ADD</Button>}/>
+            <CardHeader  title="Item List" action={<Button onClick={nextpage} color="secondary">ADD</Button>}/>
             <CardContent>
             <Box sx={{ height: 400, width: '100%' }}>
       <DataGrid
         rows={apiData}
         columns={columns}
-        getRowId={(row)=>row.customerId}
+        getRowId={(row)=>row.itemId}
         pageSize={5} // Use pageSize instead of paginationModel for the default page size
         pageSizeOptions={[5]}
         disableSelectionOnClick
@@ -144,4 +112,4 @@ function Customertable({nextpage,handleEdit,selectedCustomer}){
         
   );
 }
-    export default Customertable;
+    export default Itemtable;

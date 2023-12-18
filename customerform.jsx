@@ -8,19 +8,19 @@ import { TextField } from '@mui/material';
 import axios from 'axios';
 
 
-function CustomerForm({backpage}){
-
+function CustomerForm({backpage,selectedCustomer,deselect}){
+  const [editing, setEditing] = useState(false);
     const formik = useFormik({
         initialValues: {
-        customerName: '',
-          email: '',
-          address: '',
-          street: '',
-          city: '',
-          pincode: '',
-          mobileNumber: '',
-          outstandingAmount: '',
-          outstandingLimit: '',
+          customerName: selectedCustomer?.customerName || '',
+          email: selectedCustomer?.email || '',
+          address: selectedCustomer?.address || '',
+          street: selectedCustomer?.street || '',
+          city: selectedCustomer?.city || '',
+          pincode: selectedCustomer?.pincode || '',
+          mobileNumber: selectedCustomer?.mobileNumber || '',
+          outstandingAmount: selectedCustomer?.outstandingAmount || '',
+          outstandingLimit: selectedCustomer?.outstandingLimit || '',
         },
         validationSchema: Yup.object({
           customerName: Yup.string().required('Name is required'),
@@ -33,20 +33,48 @@ function CustomerForm({backpage}){
           outstandingAmount: Yup.string().required('Outstanding Amount is required'),
           outstandingLimit: Yup.string().required('Outstanding Limit is required'),
         }),
-        onSubmit: async(values) => {
-            try {
-                // Make a POST request to your API endpoint with the form values
-                const response = await axios.post('http://localhost:5000/api/Customer', values);
-        
-                // Log the response or handle it according to your needs
-                console.log('API Response:', response.data);
-              } catch (error) {
-                // Handle any errors that occurred during the API call
-                console.error('Error adding data:', error);
-              }
-          
+        onSubmit: async (values) => {
+          try {
+            if (editing && selectedCustomer?.customerId) {
+              // Make a PUT request to update existing data
+              const response = await axios.patch(`http://localhost:5000/api/Customer`,{customerId:selectedCustomer.customerId,...values});
+              deselect()
+              // Log the response or handle it according to your needs
+              console.log('API Response:', response.data);
+              document.getElementById("cancelbtn").click();
+            } else {
+              // Make a POST request to create new data
+              const response = await axios.post('http://localhost:5000/api/Customer', values);
+    
+              // Log the response or handle it according to your needs
+              console.log('API Response:', response.data);
+              document.getElementById("cancelbtn").click();
+            }
+          } catch (error) {
+            // Handle any errors that occurred during the API call
+            console.error('Error updating data:', error);
+          }
         },
       });
+      useEffect(() => {
+        // Update form values when selectedCustomer changes (for editing)
+        if (selectedCustomer) {
+          setEditing(true);
+        formik.setValues({
+          customerName: selectedCustomer?.customerName || '',
+          email: selectedCustomer?.email || '',
+          address: selectedCustomer?.address || '',
+          street: selectedCustomer?.street || '',
+          city: selectedCustomer?.city || '',
+          pincode: selectedCustomer?.pincode || '',
+          mobileNumber: selectedCustomer?.mobileNumber || '',
+          outstandingAmount: selectedCustomer?.outstandingAmount || '',
+          outstandingLimit: selectedCustomer?.outstandingLimit || '',
+        });
+      }else{
+        setEditing(false);
+      }
+      }, [selectedCustomer]);
     return(
         <div>
         <Card sx={{ minWidth: 275 }}>
@@ -184,10 +212,16 @@ function CustomerForm({backpage}){
               </div>
             </div>
             <div className='text-end'>
+              {editing ? (
+                <button className="btn btn-success me-2 btn-sm" type="submit">
+                Update
+              </button>
+              ):(
             <button className="btn btn-success me-2 btn-sm "  type="submit" >
                 Save
             </button>
-            <button className="btn btn-danger me-2 btn-sm " id="btn1" type="reset" onClick={backpage}>
+              )}
+            <button className="btn btn-danger me-2 btn-sm " id="cancelbtn" type="reset" onClick={backpage}>
                 Cancel
             </button>
             </div>
