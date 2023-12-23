@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid,GridToolbar  } from '@mui/x-data-grid';
+import { DataGrid,GridToolbar } from '@mui/x-data-grid';
 import axios from 'axios'; 
 import { Button, Card, CardContent, CardHeader, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-function Customertable({nextpage,handleEdit,selectedCustomer}){
+function Billlisttable({nextpage,handleEdit}){
     const [apiData, setApiData] =useState([]);
     
     const handleDelete = async (id) => {
         try {
           console.log(id)  
-          await axios.delete(`http://localhost:5000/api/Customer/${id}`);
+          await axios.delete(`http://localhost:5000/api/Bill/${id}`);
           console.log("deleted")
         } catch (error) {
           console.error('Error deleting data:', error);
@@ -24,72 +24,64 @@ function Customertable({nextpage,handleEdit,selectedCustomer}){
     const columns = [
     
         {
+          field: 'billNumber',
+          headerName: 'Bill No',
+          width: 120,
+          editable: true,
+          headerClassName: 'custom-header'
+        },
+        {
+          field: 'billDate',
+          headerName: 'Bill Date',
+          width: 120,
+          editable: true,
+          headerClassName: 'custom-header'
+        },
+        {
+          field: 'totalValue',
+          headerName: 'Total Value',
+          type: 'text',
+          width: 120,
+          editable: true,
+          headerClassName: 'custom-header'
+        },
+        {
+          field: 'totalTax',
+          headerName: 'Total Tax',
+          type: 'text',
+          width: 120,
+          editable: true,
+          headerClassName: 'custom-header'
+        },
+        {
+          field: 'totalAmount',
+          headerName: 'Total amount',
+          type: 'text',
+          width: 120,
+          editable: true,
+          headerClassName: 'custom-header'
+        },
+        {
+          field: 'customerId',
+          headerName: 'Customer ID',
+          type: 'text',
+          width: 120,
+          editable: true,
+          headerClassName: 'custom-header'
+        },
+        {
           field: 'customerName',
-          headerName: 'Name',
-          width: 150,
-          editable: true,
-          headerClassName: 'custom-header'
-        },
-        {
-          field: 'address',
-          headerName: 'Address',
-          width: 150,
-          editable: true,
-          headerClassName: 'custom-header'
-        },
-        {
-          field: 'street',
-          headerName: 'Street',
+          headerName: 'Customer Name',
           type: 'text',
-          width: 110,
+          width: 120,
           editable: true,
           headerClassName: 'custom-header'
         },
         {
-          field: 'city',
-          headerName: 'city',
+          field: 'isCredit',
+          headerName: 'Is Credit',
           type: 'text',
-          width: 110,
-          editable: true,
-          headerClassName: 'custom-header'
-        },
-        {
-          field: 'pincode',
-          headerName: 'Pincode',
-          type: 'text',
-          width: 110,
-          editable: true,
-          headerClassName: 'custom-header'
-        },
-        {
-          field: 'mobileNumber',
-          headerName: 'Mobile No',
-          type: 'text',
-          width: 110,
-          editable: true,
-          headerClassName: 'custom-header'
-        },
-        {
-          field: 'email',
-          headerName: 'Email',
-          type: 'text',
-          width: 110,
-          editable: true,
-          headerClassName: 'custom-header'
-        },
-        {
-          field: 'outstandingAmount',
-          headerName: 'Outstanding amount',
-          type: 'number',
-          width: 110,
-          editable: true,
-          headerClassName: 'custom-header'
-        },
-        {
-          field: 'outstandingLimit',
-          headerName: 'Outstanding limit',
-          type: 'number',
-          width: 110,
+          width: 120,
           editable: true,
           headerClassName: 'custom-header'
         },
@@ -97,15 +89,14 @@ function Customertable({nextpage,handleEdit,selectedCustomer}){
           field: 'actions',
           headerName: 'Actions',
           sortable: false,
-          width: 150,
+          width: 250,
           headerClassName: 'custom-header',
           renderCell: (params) => (
             <div>
-              
               <IconButton variant="contained" color="primary" size="small" style={{ marginRight: 8 }} onClick={() =>handleEdit(params.row)}>
-              <EditIcon/>
+                <EditIcon/>
               </IconButton>
-              <IconButton variant="contained" color='error' size="small" onClick={() => handleDelete(params.row.customerId)} >
+              <IconButton variant="contained" color="error" size="small" onClick={() => handleDelete(params.row.billId)} >
                 <DeleteIcon/>
               </IconButton>
             </div>
@@ -117,7 +108,7 @@ function Customertable({nextpage,handleEdit,selectedCustomer}){
         const fetchData = async () => {
             try {
               // Replace 'API_ENDPOINT_URL' with your actual API endpoint URL
-              const response = await axios.get('http://localhost:5000/api/Customer/');
+              const response = await axios.get('http://localhost:5000/api/Bill');
               console.log(response.data)
                // Map the received data and assign a unique 'id' property to each row
             const formattedData = response.data.rows.map((row, index) => ({
@@ -139,13 +130,13 @@ function Customertable({nextpage,handleEdit,selectedCustomer}){
     
     return(
         <Card>
-            <CardHeader  title="Customer List" action={<Button variant='contained' onClick={nextpage} size='small' color="secondary">ADD</Button>}/>
+            <CardHeader  title=" BillList" action={<Button variant='contained' onClick={nextpage} color="secondary">ADD</Button>}/>
             <CardContent>
             <Box sx={{ height: 400, width: '100%' }}>
       <DataGrid
         rows={apiData}
         columns={columns}
-        getRowId={(row)=>row.customerId}
+        getRowId={(row)=>row.billId}
         slots={{ toolbar: GridToolbar }}
         slotProps={{
           toolbar: {
@@ -162,7 +153,7 @@ function Customertable({nextpage,handleEdit,selectedCustomer}){
             paginationModel: { page: 0, pageSize: 5 },
           },
         }}
-      
+
         pageSizeOptions={[5,10]}
         disableSelectionOnClick
       />
@@ -172,4 +163,4 @@ function Customertable({nextpage,handleEdit,selectedCustomer}){
         
   );
 }
-    export default Customertable;
+    export default Billlisttable;

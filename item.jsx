@@ -28,7 +28,7 @@ function Item() {
       
       {
         next 
-        ?(<Itemtable nextpage={nextpage}handleEdit={handleEdit} selectedItem={selectedItem}/>)
+        ?(<Itemtable nextpage={nextpage}handleEdit={handleEdit}/>)
         :( <Itemform backpage={backpage}selectedItem={selectedItem} deselect={deselect}/>)
       }
       

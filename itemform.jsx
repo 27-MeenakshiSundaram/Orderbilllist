@@ -15,9 +15,9 @@ function Itemform({backpage,selectedItem,deselect}){
         initialValues: {
           itemCode: selectedItem?.itemCode ||'',
           itemName: selectedItem?.itemName ||'',
-        stock: selectedItem?.stock ||'',
-        rate: selectedItem?.rate ||'',
-        gstRate: selectedItem?.gstRate ||'',
+          stock: selectedItem?.stock ||'',
+          rate: selectedItem?.rate ||'',
+          gstRate: selectedItem?.gstRate ||'',
         },
         validationSchema: Yup.object({
         itemCode: Yup.string().required('Item Code is required'),
@@ -42,7 +42,7 @@ function Itemform({backpage,selectedItem,deselect}){
         
                 // Log the response or handle it according to your needs
                 console.log('API Response:', response.data);
-             
+                document.getElementById("cancelbtn").click();
               }
               } catch (error) {
                 // Handle any errors that occurred during the API call
@@ -56,7 +56,7 @@ function Itemform({backpage,selectedItem,deselect}){
         if (selectedItem) {
           setEditing(true);
         formik.setValues({
-          itemCode: selectedItem?.itemCode ||'',
+        itemCode: selectedItem?.itemCode ||'',
         itemName: selectedItem?.itemName ||'',
         stock: selectedItem?.stock ||'',
         rate: selectedItem?.rate ||'',
@@ -96,7 +96,7 @@ function Itemform({backpage,selectedItem,deselect}){
                 <b>Item Name:</b>
                 <TextField
           className="form-control"
-          id="itemname" size='small' placeholder='Enter Item Name'
+          id="itemName" size='small' placeholder='Enter Item Name'
           variant="outlined"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -112,26 +112,48 @@ function Itemform({backpage,selectedItem,deselect}){
                 <b>Stock:</b>
                 <TextField
           className="form-control"
-          id="rate" size='small' placeholder='Enter Rate'
+          id="stock" size='small' placeholder='Enter Rate'
           variant="outlined"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.rate}
-          error={formik.touched.rate && Boolean(formik.errors.rate)}
-          helperText={formik.touched.rate && formik.errors.rate}
-        />
-              </div>
-              <div className="col-sm-6">
-                <b>Rate:</b>
-                <TextField
-          className="form-control"
-          id="stock" size='small' placeholder='Enter stock'
-          variant="outlined"
-          onChange={formik.handleChange}
+          onChange={(e) => {
+      const input = e.target.value;
+      if (!isNaN(input)) {
+        formik.handleChange({
+          target: {
+            id: 'stock',
+            value: input,
+          },
+    });
+  }
+}}
           onBlur={formik.handleBlur}
           value={formik.values.stock}
           error={formik.touched.stock && Boolean(formik.errors.stock)}
           helperText={formik.touched.stock && formik.errors.stock}
+          
+        />
+          </div>
+
+              <div className="col-sm-6">
+                <b>Rate:</b>
+                <TextField
+          className="form-control"
+          id="rate" size='small' placeholder='Enter stock'
+          variant="outlined"
+          onChange={(e) => {
+            const input = e.target.value;
+            if (!isNaN(input)) {
+              formik.handleChange({
+                target: {
+                  id: 'rate',
+                  value: input,
+                },
+              });
+            }
+          }}
+          onBlur={formik.handleBlur}
+          value={formik.values.rate}
+          error={formik.touched.rate && Boolean(formik.errors.rate)}
+          helperText={formik.touched.rate && formik.errors.rate}
         />
              </div>
                
@@ -144,7 +166,17 @@ function Itemform({backpage,selectedItem,deselect}){
           className="form-control"
           id="gstRate" size='small' placeholder='Enter GST Rate'
           variant="outlined"
-          onChange={formik.handleChange}
+          onChange={(e) => {
+            const input = e.target.value;
+            if (!isNaN(input)) {
+              formik.handleChange({
+                target: {
+                  id: 'gstRate',
+                  value: input,
+                },
+              });
+            }
+          }}
           onBlur={formik.handleBlur}
           value={formik.values.gstRate}
           error={formik.touched.gstRate && Boolean(formik.errors.gstRate)}

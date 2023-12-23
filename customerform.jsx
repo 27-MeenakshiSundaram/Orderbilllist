@@ -30,7 +30,16 @@ function CustomerForm({backpage,selectedCustomer,deselect}){
           city: Yup.string().required('City is required'),
           pincode: Yup.string().required('Pincode is required'),
           mobileNumber: Yup.number().required('Mobile No is required'),
-          outstandingAmount: Yup.string().required('Outstanding Amount is required'),
+          outstandingAmount: Yup.string()
+        .required('Outstanding Amount is required')
+        .test(
+          'is-less-than-limit',
+          'Outstanding Amount cannot be greater than Outstanding Limit',
+          function (value) {
+            const outstandingLimit = this.parent.outstandingLimit || 0;
+            return parseInt(value, 10) <= parseInt(outstandingLimit, 10);
+          }
+        ),
           outstandingLimit: Yup.string().required('Outstanding Limit is required'),
         }),
         onSubmit: async (values) => {
@@ -92,7 +101,7 @@ function CustomerForm({backpage,selectedCustomer,deselect}){
               <b>CustomerName:</b>
               <TextField
           className="form-control"
-          id="customerName" size='small' placeholder='Enter Name'
+          id="customerName" size='small' placeholder='Enter Customer Name'
           variant="outlined"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -149,24 +158,35 @@ function CustomerForm({backpage,selectedCustomer,deselect}){
           className="form-control"
           id="pincode" size='small' placeholder='Enter pincode'
           variant="outlined"
-          onChange={formik.handleChange}
+          onChange={(e) => {
+            const input = e.target.value;
+            if (/^\d*$/.test(input)) {
+              formik.handleChange(e);
+            }
+          }}
           onBlur={formik.handleBlur}
           value={formik.values.pincode}
           error={formik.touched.pincode && Boolean(formik.errors.pincode)}
           helperText={formik.touched.pincode && formik.errors.pincode}
+          inputProps={{
+            maxLength: 6,
+          }}
         />
               </div>
               <div className="col-sm-4">
                 <b>Mobile No:</b>
                 <TextField
           className="form-control"
-          id="mobileNumber" size='small' placeholder='Enter Name'
+          id="mobileNumber" size='small' placeholder='Enter mobile no'
           variant="outlined"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.mobileNumber}
           error={formik.touched.mobileNumber && Boolean(formik.errors.mobileNumber)}
           helperText={formik.touched.mobileNumber && formik.errors.mobileNumber}
+          inputProps={{
+            maxLength: 10,
+          }}
         />
               </div>   
             </div>
@@ -175,7 +195,7 @@ function CustomerForm({backpage,selectedCustomer,deselect}){
                 <b>Email:</b>
                 <TextField
           className="form-control"
-          id="email" size='small' placeholder='Enter Name'
+          id="email" size='small' placeholder='Enter Email'
           variant="outlined"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -188,9 +208,14 @@ function CustomerForm({backpage,selectedCustomer,deselect}){
                 <b>Outstanding amount:</b>
                 <TextField
           className="form-control"
-          id="outstandingAmount" size='small' placeholder='Enter Name'
+          id="outstandingAmount" size='small' placeholder='Outstanding amount'
           variant="outlined"
-          onChange={formik.handleChange}
+          onChange={(e) => {
+            const input = e.target.value;
+            if (/^\d*$/.test(input)) {
+              formik.handleChange(e);
+            }
+          }}
           onBlur={formik.handleBlur}
           value={formik.values.outstandingAmount}
           error={formik.touched.outstandingAmount && Boolean(formik.errors.outstandingAmount)}
@@ -201,9 +226,14 @@ function CustomerForm({backpage,selectedCustomer,deselect}){
                 <b>Outstanding Limit:</b>
                 <TextField
           className="form-control"
-          id="outstandingLimit" size='small' placeholder='Enter Name'
+          id="outstandingLimit" size='small' placeholder='Enter Outstanding Limit'
           variant="outlined"
-          onChange={formik.handleChange}
+          onChange={(e) => {
+            const input = e.target.value;
+            if (/^\d*$/.test(input)) {
+              formik.handleChange(e);
+            }
+          }}
           onBlur={formik.handleBlur}
           value={formik.values.outstandingLimit}
           error={formik.touched.outstandingLimit && Boolean(formik.errors.outstandingLimit)}

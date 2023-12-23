@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid ,GridToolbar} from '@mui/x-data-grid';
 import axios from 'axios'; 
-import { Button, Card, CardContent, CardHeader } from '@mui/material';
+import { Button, Card, CardContent, CardHeader, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-function Itemtable({nextpage,handleEdit,selectedItem}){
+
+function Itemtable({nextpage,handleEdit}){
     const [apiData, setApiData] =useState([]);
     const handleDelete = async (id) => {
         try {
@@ -23,12 +26,14 @@ function Itemtable({nextpage,handleEdit,selectedItem}){
           headerName: 'Item Code',
           width: 170,
           editable: true,
+          headerClassName: 'custom-header'
         },
         {
           field: 'itemName',
           headerName: 'Item Name',
           width: 170,
           editable: true,
+          headerClassName: 'custom-header'
         },
         {
           field: 'stock',
@@ -36,6 +41,7 @@ function Itemtable({nextpage,handleEdit,selectedItem}){
           type: 'text',
           width: 170,
           editable: true,
+          headerClassName: 'custom-header'
         },
         {
           field: 'rate',
@@ -43,6 +49,7 @@ function Itemtable({nextpage,handleEdit,selectedItem}){
           type: 'text',
           width: 170,
           editable: true,
+          headerClassName: 'custom-header'
         },
         {
           field: 'gstRate',
@@ -50,20 +57,22 @@ function Itemtable({nextpage,handleEdit,selectedItem}){
           type: 'text',
           width: 170,
           editable: true,
+          headerClassName: 'custom-header'
         },
         {
           field: 'actions',
           headerName: 'Actions',
           sortable: false,
-          width: 170,
+          width: 370,
+          headerClassName: 'custom-header',
           renderCell: (params) => (
             <div>
-              <Button variant="contained" color="primary" size="small" style={{ marginRight: 8 }} onClick={() =>handleEdit(params.row)}>
-                Edit
-              </Button>
-              <Button variant="contained" color="secondary" size="small" onClick={() => handleDelete(params.row.itemId)} >
-                Delete
-              </Button>
+              <IconButton variant="contained" color="primary" size="small" style={{ marginRight: 8 }} onClick={() =>handleEdit(params.row)}>
+              <EditIcon/>
+              </IconButton>
+              <IconButton variant="contained" color="error" size="small" onClick={() => handleDelete(params.row.itemId)} >
+              <DeleteIcon/>
+              </IconButton>
             </div>
           ),
         },
@@ -95,15 +104,31 @@ function Itemtable({nextpage,handleEdit,selectedItem}){
     
     return(
         <Card>
-            <CardHeader  title="Item List" action={<Button onClick={nextpage} color="secondary">ADD</Button>}/>
+            <CardHeader  title="Item List" action={<Button variant='contained' onClick={nextpage} color="secondary">ADD</Button>}/>
             <CardContent>
             <Box sx={{ height: 400, width: '100%' }}>
       <DataGrid
         rows={apiData}
         columns={columns}
         getRowId={(row)=>row.itemId}
-        pageSize={5} // Use pageSize instead of paginationModel for the default page size
-        pageSizeOptions={[5]}
+        slots={{ toolbar: GridToolbar }}
+        slotProps={{
+          toolbar: {
+            showQuickFilter: true,
+            printOptions: {disableToolbarButton:true},
+            csvOptions: {disableToolbarButton:true},
+          },
+        }}
+        disableColumnFilter
+        disableDensitySelector
+        disableColumnSelector
+        initialState={{
+          pagination: {
+            paginationModel: { page: 0, pageSize: 5 },
+          },
+        }}
+
+        pageSizeOptions={[5,10]}
         disableSelectionOnClick
       />
     </Box>
